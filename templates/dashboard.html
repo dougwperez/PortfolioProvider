@@ -1,5 +1,37 @@
 {% extends "layout.html" %} {% block content %}
 
+<script>
+  $(document).ready(function () {
+    $("#add_stocks").click(function () {
+      $(".ui.modal").modal("show");
+    });
+
+    $("#save").click(function () {
+      var symbols = $("#symbols").val();
+
+      console.log("symbols", symbols);
+
+      var stockSymbols = symbols.split("\n");
+
+      console.log("stockSymbols", stockSymbols);
+
+      for (var i = 0; i < stockSymbols.length; i++) {
+        console.log("stockSymbols[i]", stockSymbols[i]);
+
+        $.ajax({
+          url: "/stock",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ symbol: stockSymbols[i] }),
+          dataType: "json",
+        });
+      }
+
+      $(".ui.modal").modal("hide");
+    });
+  });
+</script>
+
 <div class="ui input">
   <input type="text" placeholder="P/E Ratio" />
 </div>
@@ -20,6 +52,10 @@
 
 <button class="ui button primary">Filter</button>
 
+<div>
+  <button id="add_stocks" class="ui button">Add Stocks</button>
+</div>
+
 <table class="ui celled table">
   <thead>
     <tr>
@@ -29,21 +65,31 @@
     </tr>
   </thead>
   <tbody>
+    {% for stock in stocks %}
     <tr>
-      <td data-label="Name">MST</td>
-      <td data-label="Age">10</td>
-      <td data-label="Job">2</td>
+      <td>{{ stock.symbol }}</td>
+      <td>{{ stock.forward_pe }}</td>
+      <td>{{ stock.divident_yield }}</td>
     </tr>
-    <tr>
-      <td data-label="Name">AAPL</td>
-      <td data-label="Age">44</td>
-      <td data-label="Job">3</td>
-    </tr>
-    <tr>
-      <td data-label="Name">FB</td>
-      <td data-label="Age">24</td>
-      <td data-label="Job">0</td>
-    </tr>
+    {% endfor %}
   </tbody>
 </table>
+<div class="ui modal">
+  <i class="close icon"></i>
+  <div class="header">Add Stock Symbol</div>
+  <div class="content">
+    <div class="ui form">
+      <div class="field">
+        <label>Enter Stock Symbols</label>
+        <textarea id="symbols"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="actions">
+    <div id="save" class="ui positive right labeled icon button">
+      Add Symbols
+      <i class="plus icon"></i>
+    </div>
+  </div>
+</div>
 {% endblock %}

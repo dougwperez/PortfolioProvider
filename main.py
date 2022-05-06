@@ -25,12 +25,18 @@ def get_db():
         db.close()
 
 @app.get("/")
-def dashboard(request: Request):
+def dashboard(request: Request, db: Session = Depends(get_db)):
     """
 
     Displays the stock screener dashboard / homepage
     """
-    return templates.TemplateResponse("dashboard.html", {"request": request} )
+
+    stocks = db.query(Stock).all()
+
+    print(stocks)
+
+
+    return templates.TemplateResponse("dashboard.html", {"request": request, "stocks": stocks } )
 
 
 
