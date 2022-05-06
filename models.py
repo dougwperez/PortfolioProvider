@@ -12,6 +12,7 @@ class Stock(Base):
     price = Column(Numeric(10, 2))
     forward_pe = Column(Numeric(10, 2))
     forward_eps = Column(Numeric(10, 2))
+    # TYPO DIVIDENT
     divident_yield = Column(Numeric(10, 2))
     ma50 = Column(Numeric(10, 2))
     ma200 = Column(Numeric(10, 2))

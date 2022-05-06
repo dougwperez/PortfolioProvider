@@ -25,18 +25,29 @@ def get_db():
         db.close()
 
 @app.get("/")
-def dashboard(request: Request, db: Session = Depends(get_db)):
+def dashboard(request: Request, forward_pe = None, divident_yield = None, ma50 = None, ma200 = None, db: Session = Depends(get_db)):
     """
 
     Displays the stock screener dashboard / homepage
     """
 
-    stocks = db.query(Stock).all()
+    stocks = db.query(Stock)
 
-    print(stocks)
+    if forward_pe:
+        stocks = stocks.filter(Stock.forward_pe < forward_pe)
+
+    if divident_yield:
+        stocks = stocks.filter(Stock.divident_yield > divident_yield)
+
+    if ma50:
+        stocks = stocks.filter(Stock.price > Stock.ma50)
+
+    if ma200:
+        stocks = stocks.filter(Stock.price > Stock.ma200)
 
 
-    return templates.TemplateResponse("dashboard.html", {"request": request, "stocks": stocks } )
+
+    return templates.TemplateResponse("dashboard.html", {"request": request, "stocks": stocks , "divident_yield": divident_yield, "forward_pe": forward_pe, "ma200": ma200, "ma50": ma50  } )
 
 
 
